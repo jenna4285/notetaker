@@ -1,1 +1,14 @@
 mode_modules/
+
+
+.DS_Store
+node_modules
+*-lock.*
+*.lock
+*.log
+
+/dist
+/secure
+/index.d.ts
+
+/bench/**/bundle.js
