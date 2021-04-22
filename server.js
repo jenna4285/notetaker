@@ -1,9 +1,14 @@
-const notes = require('./db/db.json');
+// const notes = require('./db/db.json');
 
 // Dependencies
 
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
+const { v4: uuidv4 } = require('uuid');
+
+var data = fs.readFileSync("./db/db.json");
+var notes = JSON.parse(data);
 
 // Sets up the Express App
 
@@ -27,36 +32,33 @@ app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, 'public/notes.
 app.get('/api/notes', (req, res) => res.json(notes));
 
 // Displays a single note, or returns false
-// app.get('/api/notes/:notes', (req, res) => {
-//   const chosen = req.params.notes;
+app.delete('/api/notes/:id', (req, res) => {
+  const chosen = req.params.id;
 
-//   console.log(notes);
-
-//   /* Check each note routeName and see if the same as "chosen"
-//    If the statement is true, send the note back as JSON,
-//    otherwise tell the user no note was found */
-
-//   for (let i = 0; i < notes.length; i++) {
-//     if (chosen === notes[i].routeName) {
-//       return res.json(notes[i]);
-//     }
-//   }
-
-//   return res.json(false);
-// });
+  notes = notes.filter(item => item.id != chosen);
+  
+  fs.writeFile("./db/db.json", JSON.stringify(notes), function (err) {
+    if (err) {
+      console.log(err);
+    } 
+    console.log("success");
+  })
+  res.json(notes);
+});
 
 app.post('/api/notes', (req, res) => {
-    // req.body hosts is equal to the JSON post sent from the user
-    // This works because of our body parsing middleware
     const newNotes = req.body;
-  
-    // Using a RegEx Pattern to remove spaces from newCharacter
-    // You can read more about RegEx Patterns later https://www.regexbuddy.com/regex.html
-    newNote.routeName = newNote.name.replace(/\s+/g, '').toLowerCase();
+    newNotes.id = uuidv4();
     console.log(newNotes);
   
-    newNotes.push(notes);
+    notes.push(newNotes);
+    fs.writeFile("./db/db.json", JSON.stringify(notes), function (err) {
+      if (err) {
+        console.log(err);
+      } 
+      console.log("success");
+    })
     res.json(notes);
-  });
+});
 
 app.listen(PORT, () => console.log(`App listening on PORT ${PORT}`));
