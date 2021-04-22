@@ -1,5 +1,3 @@
-// const notes = require('./db/db.json');
-
 // Dependencies
 
 const express = require('express');
@@ -13,25 +11,20 @@ var notes = JSON.parse(data);
 // Sets up the Express App
 
 const app = express();
-const PORT = 3000;
-// process.env.PORT || 
+const PORT = process.env.PORT || 3000;
 
-// Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static('public'));
 
-// get and post routes
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, '.public/index.html'));
 });
 
 app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, 'public/notes.html')));
 
-// Displays all notes
 app.get('/api/notes', (req, res) => res.json(notes));
 
-// Displays a single note, or returns false
 app.delete('/api/notes/:id', (req, res) => {
   const chosen = req.params.id;
 
